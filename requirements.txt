@@ -1,0 +1,5 @@
+flask
+requests
+docker
+peewee
+psycopg2-binary

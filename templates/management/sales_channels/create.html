@@ -1,0 +1,8 @@
+{% extends "management/sales_channels/base.html" %}
+{% block title %}Create · {{ super() }}{% endblock %}
+{% block inner %}
+<p>Create Sales Channel</p>
+<form method="POST" action="{{ url_for('create_sales_channel') }}">
+    {% include "management/sales_channels/sales_channel.html" %}
+</form>
+{% endblock %}

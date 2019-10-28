@@ -1,0 +1,34 @@
+{% if schema.get('choices', []) %}
+<div class="input-group">
+    <select
+        name="{{ name }}"
+        class="creatable-choices form-control"
+        data-choices-creator-key="{{ name|lower }}"
+        data-choices-creator-title="Add New {{ schema.get('name', name) }}"
+        data-choices-creator-primary-action="Add"
+        data-choices-creator-original="{{ schema.get('default', '') }}"
+        id="choices-creator-{{ name|lower }}"
+    >
+        <option value="" disabled="disabled">---</option>
+        {% for choice in schema.get('choices', []) %}
+        <option
+            value="{{ choice }}"
+            {% if choice == schema.get('default', '') %}selected="selected"{% endif %}
+        >
+            {{ choice }}
+        </option>
+        {% endfor %}
+    </select>
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="choices-creator-{{ name|lower }}-trigger">+ New</button>
+    </div>
+</div>
+{% else %}
+<input
+    name="{{ name }}"
+    type="text"
+    class="form-control"
+    value="{{ schema.get('default', '') }}"
+    {% if schema.get('immutable', False) %}disabled="disabled"{% endif %}
+/>
+{% endif %}

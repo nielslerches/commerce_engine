@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block title %}Management · {{ super() }}{% endblock %}
+{% block stylesheets %}
+{{ super() }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.11/css/bootstrap-select.css" />
+<style>
+    .bootstrap-select {
+        width: 100% !important;
+    }
+</style>
+{% endblock %}
+{% block content %}
+{{ super() }}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1 col-md-3 col-lg-2 bg-dark p-3 min-vh-100">
+            {% block sidebar %}
+            <form class="input-group mb-4" method="GET" action="{{ url_for('search') }}">
+                <input id="global-search-input" type="search" name="q" value="{{ q }}" class="form-control d-flex w-100"
+                    style="margin-left: -1px;" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
+            </form>
+            <a class="text-light d-flex mb-2" href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a class="text-light d-flex mb-2" href="{{ url_for('sales_channels') }}">Sales Channels</a>
+            <a class="text-light d-flex mb-2" href="{{ url_for('products') }}">Products</a>
+            {% endblock %}
+        </div>
+        <div class="col-auto py-3" style="flex: 1 1 auto;">
+            {% block main %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div style="position: absolute; top: 0; right: 0;" class="mr-3 mt-3">
+    {% for category, message in messages %}
+    <div class="toast" style="width: 700px;" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+        <strong class="mr-auto">{{ category|title }}</strong>
+        <button type="button" class="ml-2 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="toast-body">
+            {{ message }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.11/js/bootstrap-select.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.11/js/i18n/defaults-en_US.js"></script>
+<!-- Custom jQuery management utilities -->
+<script>
+    (() => {
+        const bsModalEvents = [
+            'show.bs.modal',
+            'shown.bs.modal',
+            'hide.bs.modal',
+            'hidden.bs.modal'
+        ];
+
+        $(document).ready(() => {
+            $('[data-guard-with-modal="true"]').map((i, element) => {
+                $(element).guardWithModal(
+                    element.dataset.modalNamespace,
+                    element.dataset.guardTitle,
+                    element.dataset.guardBody,
+                    element.dataset.guardPrimaryAction,
+                    element.dataset.guardPrimaryColor,
+                );
+            });
+            $('.toast').toast({
+                animation: false,
+                autohide: false,
+            });
+            $('.toast').toast('show');
+            $('.creatable-choices').map((_, element) => {
+                $(element).createChoice(
+                    element.dataset.choicesCreatorKey,
+                    element.dataset.choicesCreatorTitle,
+                    element.dataset.choicesCreatorPrimaryAction,
+                    element.dataset.choicesCreatorOriginal
+                );
+            });
+        });
+
+        function guardWithModal(
+            namespace,
+            title,
+            body,
+            primaryAction,
+            primaryColor,
+            triggerEventName,
+            triggerPredicate,
+            action
+        ) {
+            if (arguments.length === 0) {
+                return current;
+            }
+
+            let commit = false;
+
+            const modalsRoot = $('#main-modals-root');
+
+            $.parseHTML(
+                `<div class="modal fade" id="main-modal-${namespace}" tabindex="-1" role="dialog" aria-labelledby="main-modal-title" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="main-modal-title-${namespace}"></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="main-modal-body-${namespace}"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn" id="main-modal-primary-action-${namespace}"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`,
+                undefined,
+                true
+            ).forEach((element) => {
+                modalsRoot[0].append(element);
+            });
+
+            const modal = $(document.querySelector(`#main-modal-${namespace}`));
+
+            modal.modal({ show: false });
+
+            const titleElement = $(`#main-modal-title-${namespace}`);
+            const bodyElement = $(`#main-modal-body-${namespace}`);
+            const primaryActionElement = $(`#main-modal-primary-action-${namespace}`);
+
+            if (primaryAction === undefined) primaryAction = 'Confirm';
+            if (primaryColor === undefined) primaryColor = 'primary';
+            if (triggerEventName === undefined) triggerEventName = 'click';
+            if (triggerPredicate === undefined) triggerPredicate = () => true;
+            if (action === undefined) action = (subject) => subject.trigger(triggerEventName);
+
+            const modal$ = new rxjs.BehaviorSubject('hidden.bs.modal');
+
+            for (let eventName of bsModalEvents) {
+                modal.on(eventName, () => {
+                    console.log(eventName);
+                    modal$.next(eventName);
+                });
+            }
+
+            primaryActionElement.click(() => {
+                commit = true;
+                modal.modal('hide');
+            });
+
+            this.on(triggerEventName, (e) => {
+                if (!commit && triggerPredicate(e)) {
+                    e.preventDefault();
+                    modal.modal('show');
+                }
+            });
+
+            modal$.pipe(rxjs.operators.pairwise()).subscribe((pair) => {
+                const [previous, current] = pair;
+
+                if (current === 'hidden.bs.modal') {
+                    this.removeAttr('disabled');
+                }
+
+                if (previous === 'hidden.bs.modal' && current === 'show.bs.modal') {
+                    this.attr('disabled', 'disabled');
+                    titleElement.html(title);
+                    bodyElement.html(body);
+                    primaryActionElement.html(primaryAction).addClass(`btn-${primaryColor}`);
+                    modal.modal('show');
+                } else if (previous === 'hide.bs.modal' && current === 'hidden.bs.modal' && commit) {
+                    action(this);
+                    commit = false;
+                }
+            });
+        }
+
+        $.fn.guardWithModal = guardWithModal;
+
+        function createChoice(key, title, primaryAction, original) {
+            const valueInputId = `choices-creator-${key}-value`;
+            
+            $(`#choices-creator-${key}-trigger`).guardWithModal(
+                key,
+                title,
+                `<input id="${valueInputId}" class="form-control" type="text" />`,
+                primaryAction,
+                'primary',
+                'click',
+                undefined,
+                () => {
+                    const subject = $(`#choices-creator-${key}`);
+                    const value = document.getElementById(valueInputId).value;
+                    subject.html(subject.html() + `<option value="${value}">${value} (New)</option>`)
+                    subject[0].value = value;
+                }
+            );
+        }
+
+        $.fn.createChoice = createChoice;
+    })();
+</script>
+{% endblock %}

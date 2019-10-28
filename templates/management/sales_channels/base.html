@@ -1,0 +1,27 @@
+{% extends "management/base.html" %}
+{% block title %}Sales Channels · {{ super() }}{% endblock %}
+{% block main %}
+<div class="container-fluid p-0">
+    <div class="row">
+        <div class="col-md-10">
+            {% block inner %}
+            {% endblock %}
+        </div>
+        <div class="col-md-2">
+            <p>Actions</p>
+            <table class="table">
+                <tbody>
+                    {% block actions %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('create_sales_channel') }}">Create</a>
+                        </td>
+                    </tr>
+                    {% endblock %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}{{ super() }}{% endblock %}

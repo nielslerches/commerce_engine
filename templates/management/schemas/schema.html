@@ -1,0 +1,5 @@
+{% if schema['type'] == 'object' %}
+{% include "management/schemas/object.html" %}
+{% elif schema['type'] == 'string' %}
+{% include "management/schemas/string.html" %}
+{% endif %}

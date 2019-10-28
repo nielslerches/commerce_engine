@@ -1,0 +1,19 @@
+<table class="table">
+    <tbody>
+        {% for subschema in schema['properties'].values()|sort(attribute='ordering') %}
+        <tr>
+            <td>{% if 'name' in subschema %}{{ subschema['name'] }}{% endif %}</td>
+            <td>
+                {% with schema = subschema, name = subschema['key'] %}
+                <label>
+                    <small>
+                        Current: {{ schema.get('default', '') }}
+                    </small>
+                </label>
+                {% include "management/schemas/schema.html" %}
+                {% endwith %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

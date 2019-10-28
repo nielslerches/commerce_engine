@@ -1,0 +1,27 @@
+{% include "management/schemas/schema.html" %}
+<table class="table">
+    <tbody>
+        <tr>
+            <td>
+                <input type="submit" class="btn btn-primary" value="Save" />
+            </td>
+        </tr>
+        {% if object %}
+        <tr>
+            <td>
+                <input
+                    class="btn btn-danger"
+                    type="submit"
+                    value="Delete"
+                    formaction="{{ url_for('delete_sales_channel', uuid=object['uuid']) }}"
+                    data-guard-with-modal="true"
+                    data-guard-title="Delete Sales Channel?"
+                    data-guard-body="Are you sure you want to delete this sales channel? This action cannot be undone."
+                    data-guard-primary-action="Delete"
+                    data-guard-primary-color="danger"
+                />
+            </td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>

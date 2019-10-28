@@ -1,0 +1,21 @@
+{% if metric['type'] == 'nested' %}
+<p>{{ metric['name'] }}</p>
+<div class="container-fluid bg-white p-3 shadow-sm h-100">
+    {% for i in range(metric['value'].__len__()) %}
+    {% if i % 2 == 0 %}
+    {% with row = metric['value'][i:i + 2] %}
+    <div class="row">
+        {% for metric in row %}
+        <div class="col-sm-6">
+            {% include "management/metric.html" %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endwith %}
+    {% endif %}
+    {% endfor %}
+</div>
+{% elif metric['type'] == 'statistic' %}
+<p>{{ metric['name'] }}</p>
+<p>{{ metric['value'] }}</p>
+{% endif %}

@@ -1,0 +1,8 @@
+{% extends "management/products/base.html" %}
+{% block title %}{{ title }} · {{ super() }}{% endblock %}
+{% block inner %}
+<p>{{ title }}</p>
+<form method="POST" action="{{ url_for('edit_product', uuid=object['uuid']) }}">
+    {% include "management/products/product.html" %}
+</form>
+{% endblock %}

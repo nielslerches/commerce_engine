@@ -1,0 +1,41 @@
+{% extends "management/sales_channels/base.html" %}
+{% block stylesheets %}
+{{ super() }}
+<style>
+    {% for _ in objects %}
+    .table-row-{{ loop.index }}:hover a {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+    {% endfor %}
+</style>
+{% endblock %}
+{% block inner %}
+<p>Sales Channels</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Type</th>
+            <th scope="col">Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in objects %}
+        {% with href = url_for('edit_sales_channel', uuid=object['uuid']) %}
+        <tr class="table-row table-row-{{ loop.index }}">
+            <th scope="row">
+                <a class="d-flex" href="{{ href }}">{{ object['uuid'].split('-')[0] }}</a>
+            </th>
+            <td>
+                <a class="d-flex" href="{{ href }}">{{ object['type'] }}</a>
+            </td>
+            <td>
+                <a class="d-flex" href="{{ href }}">{{ object['name'] }}</a>
+            </td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

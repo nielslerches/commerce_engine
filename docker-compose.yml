@@ -1,0 +1,268 @@
+version: '2'
+
+services:
+  postgres:
+    image: postgres:12
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGUSER=postgres
+      - PGDATASE=postgres
+  commerce_engine:
+    build:
+      context: .
+    ports:
+      - 5000:5000
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=commerce_engine
+      - COMMERCE_ENGINE_MODULE_ADDRESS=0.0.0.0:5000
+      - WAREHOUSE_MODULE_ADDRESS=warehouse:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=fulfillment_center:5000
+      - SUPPLIER_MODULE_ADDRESS=supplier:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=sales_channel:5000
+      - CART_MODULE_ADDRESS=cart:5000
+      - CUSTOMER_MODULE_ADDRESS=customer:5000
+      - PRODUCT_MODULE_ADDRESS=product:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=infrastructure:5009
+    command:
+      - python3
+      - main.py
+    volumes:
+      - .:/mnt
+    depends_on:
+      - postgres
+  warehouse:
+    build:
+      context: .
+    ports:
+      - 5001:5000
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=warehouse
+      - COMMERCE_ENGINE_MODULE_ADDRESS=commerce_engine:5000
+      - WAREHOUSE_MODULE_ADDRESS=0.0.0.0:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=fulfillment_center:5000
+      - SUPPLIER_MODULE_ADDRESS=supplier:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=sales_channel:5000
+      - CART_MODULE_ADDRESS=cart:5000
+      - CUSTOMER_MODULE_ADDRESS=customer:5000
+      - PRODUCT_MODULE_ADDRESS=product:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=infrastructure:5009
+    command:
+      - python3
+      - main.py
+    volumes:
+      - .:/mnt
+    depends_on:
+      - postgres
+  fulfillment_center:
+    build:
+      context: .
+    ports:
+      - 5002:5000
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=fulfillment_center
+      - COMMERCE_ENGINE_MODULE_ADDRESS=commerce_engine:5000
+      - WAREHOUSE_MODULE_ADDRESS=warehouse:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=0.0.0.0:5000
+      - SUPPLIER_MODULE_ADDRESS=supplier:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=sales_channel:5000
+      - CART_MODULE_ADDRESS=cart:5000
+      - CUSTOMER_MODULE_ADDRESS=customer:5000
+      - PRODUCT_MODULE_ADDRESS=product:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=infrastructure:5009
+    command:
+      - python3
+      - main.py
+    volumes:
+      - .:/mnt
+    depends_on:
+      - postgres
+  supplier:
+    build:
+      context: .
+    ports:
+      - 5003:5000
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=supplier
+      - COMMERCE_ENGINE_MODULE_ADDRESS=commerce_engine:5000
+      - WAREHOUSE_MODULE_ADDRESS=warehouse:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=fulfillment_center:5000
+      - SUPPLIER_MODULE_ADDRESS=0.0.0.0:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=sales_channel:5000
+      - CART_MODULE_ADDRESS=cart:5000
+      - CUSTOMER_MODULE_ADDRESS=customer:5000
+      - PRODUCT_MODULE_ADDRESS=product:5000
+      - MANAGEMENT_MODULE_ADDRESS=management:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=infrastructure:5009
+    command:
+      - python3
+      - main.py
+    volumes:
+      - .:/mnt
+    depends_on:
+      - postgres
+  sales_channel:
+    build:
+      context: .
+    ports:
+      - 5004:5000
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=sales_channel
+      - COMMERCE_ENGINE_MODULE_ADDRESS=commerce_engine:5000
+      - WAREHOUSE_MODULE_ADDRESS=warehouse:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=fulfillment_center:5000
+      - SUPPLIER_MODULE_ADDRESS=supplier:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=0.0.0.0:5000
+      - CART_MODULE_ADDRESS=cart:5000
+      - CUSTOMER_MODULE_ADDRESS=customer:5000
+      - PRODUCT_MODULE_ADDRESS=product:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=infrastructure:5009
+    command:
+      - python3
+      - main.py
+    volumes:
+      - .:/mnt
+    depends_on:
+      - postgres
+  cart:
+    build:
+      context: .
+    ports:
+      - 5005:5000
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=cart
+      - COMMERCE_ENGINE_MODULE_ADDRESS=commerce_engine:5000
+      - WAREHOUSE_MODULE_ADDRESS=warehouse:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=fulfillment_center:5000
+      - SUPPLIER_MODULE_ADDRESS=supplier:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=sales_channel:5000
+      - CART_MODULE_ADDRESS=0.0.0.0:5000
+      - CUSTOMER_MODULE_ADDRESS=customer:5000
+      - PRODUCT_MODULE_ADDRESS=product:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=infrastructure:5009
+    command:
+      - python3
+      - main.py
+    volumes:
+      - .:/mnt
+    depends_on:
+      - postgres
+  customer:
+    build:
+      context: .
+    ports:
+      - 5006:5000
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=customer
+      - COMMERCE_ENGINE_MODULE_ADDRESS=commerce_engine:5000
+      - WAREHOUSE_MODULE_ADDRESS=warehouse:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=fulfillment_center:5000
+      - SUPPLIER_MODULE_ADDRESS=supplier:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=sales_channel:5000
+      - CART_MODULE_ADDRESS=cart:5000
+      - CUSTOMER_MODULE_ADDRESS=0.0.0.0:5000
+      - PRODUCT_MODULE_ADDRESS=product:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=infrastructure:5009
+    command:
+      - python3
+      - main.py
+    volumes:
+      - .:/mnt
+    depends_on:
+      - postgres
+  product:
+    build:
+      context: .
+    ports:
+      - 5007:5000
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=product
+      - COMMERCE_ENGINE_MODULE_ADDRESS=commerce_engine:5000
+      - WAREHOUSE_MODULE_ADDRESS=warehouse:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=fulfillment_center:5000
+      - SUPPLIER_MODULE_ADDRESS=supplier:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=sales_channel:5000
+      - CART_MODULE_ADDRESS=cart:5000
+      - CUSTOMER_MODULE_ADDRESS=customer:5000
+      - PRODUCT_MODULE_ADDRESS=0.0.0.0:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=infrastructure:5009
+    command:
+      - python3
+      - main.py
+    volumes:
+      - .:/mnt
+    depends_on:
+      - postgres
+  management:
+    build:
+      context: .
+    ports:
+      - 5008:5000
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=management
+      - COMMERCE_ENGINE_MODULE_ADDRESS=commerce_engine:5000
+      - WAREHOUSE_MODULE_ADDRESS=warehouse:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=fulfillment_center:5000
+      - SUPPLIER_MODULE_ADDRESS=supplier:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=sales_channel:5000
+      - CART_MODULE_ADDRESS=cart:5000
+      - CUSTOMER_MODULE_ADDRESS=customer:5000
+      - PRODUCT_MODULE_ADDRESS=product:5000
+      - MANAGEMENT_MODULE_ADDRESS=0.0.0.0:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=infrastructure:5009
+    command:
+      - python3
+      - management.py
+    volumes:
+      - .:/mnt
+    depends_on:
+      - postgres
+  infrastructure:
+    build:
+      context: .
+    ports:
+      - 5009:5009
+    privileged: true
+    environment:
+      - DEBUG=true
+      - MASTER_MODULE_NAME=commerce_engine
+      - MODULE_NAME=infrastructure
+      - COMMERCE_ENGINE_MODULE_ADDRESS=commerce_engine:5000
+      - WAREHOUSE_MODULE_ADDRESS=warehouse:5000
+      - FULFILLMENT_CENTER_MODULE_ADDRESS=fulfillment_center:5000
+      - SUPPLIER_MODULE_ADDRESS=supplier:5000
+      - SALES_CHANNEL_MODULE_ADDRESS=sales_channel:5000
+      - CART_MODULE_ADDRESS=cart:5000
+      - CUSTOMER_MODULE_ADDRESS=customer:5000
+      - PRODUCT_MODULE_ADDRESS=product:5000
+      - MANAGEMENT_MODULE_ADDRESS=management:5000
+      - INFRASTRUCTURE_MODULE_ADDRESS=0.0.0.0:5009
+    command:
+      - python3
+      - main.py
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/mnt
+    depends_on:
+      - postgres
